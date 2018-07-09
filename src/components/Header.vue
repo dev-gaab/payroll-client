@@ -63,7 +63,7 @@
             <i class="fas fa-user"></i> SuperUser
           </a>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="#">Cerrar Sesion</a>
+            <a class="dropdown-item" href="#" @click="logout">Cerrar Sesion</a>
           </div>
         </li>
 
@@ -74,6 +74,12 @@
 
 <script>
 export default {
-  name: 'Header'
+  name: 'Header',
+  methods: {
+    logout () {
+      this.$store.commit('logout');
+      this.$router.push({path: '/login'});
+    }
+  }
 }
 </script>

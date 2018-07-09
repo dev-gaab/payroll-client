@@ -1,55 +1,62 @@
 <template>
-  <div class="container">
-    <div class="row justify-content-md-center" style="margin: 10%;">
-
-      <div id="login" class="col col-md-6 border-d" style="text-align: center">
-        <!-- title -->
-        <h2 class="h2 mt-4"></h2><img src="../assets/loo.png" alt="Responsive image" class="mr-4 img-fluid" height="45"></h2>
-        <hr style="height: 1px; background-color: grey; border-radius: 300px/10px;">
-        <!-- formulario de login -->
-        <div class="mt-4">
-          <form @submit.prevent="auth">
-            <div class="form-group">
-                <label for="username" class="float-left"><b>Usuario</b></label>
-                <input type="text" class="form-control" placeholder="Nombre de usuario" autocomplete="off" v-model="form.user">
-            </div>
-            <div class="form-group">
-                <label for="password" class="float-left"><b>Contraseña</b></label>
-                <input type="password" class="form-control" placeholder="Escriba su contraseña" v-model="form.password">
-            </div>
-            <button type="submit" class="btn btn-success float-right">Ingresar</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
+  <v-layout align-center justify-center>
+    <v-flex xs12 sm8 md4>
+      <v-card class="elevation-12">
+        <!-- Header card -->
+        <v-toolbar dark color="teal accent-4">
+          <v-toolbar-title><img src="../assets/Logo.png" height="40"></v-toolbar-title>
+          <v-spacer></v-spacer>
+        </v-toolbar>
+        <!-- formulario -->
+        <form @submit.prevent="auth">
+          <v-card-text>
+            <v-text-field color="teal accent-4" prepend-icon="fa-user" name="login" label="Usuario" type="text" autocomplete="off" v-model="form.username"></v-text-field>
+            <v-text-field color="teal accent-4" id="password" prepend-icon="fa-lock" name="password" label="Contraseña" type="password" v-model="form.password"></v-text-field>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn type="submit" dark color="teal accent-4">Login</v-btn>
+          </v-card-actions>
+        </form> <!-- Fin form-->
+      </v-card>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
+  import axios from 'axios';
+
   export default {
     name: 'Login',
     data(){
       return {
 
         form:{
-          user: '',
+          username: '',
           password: ''
         }
       }
     },
     methods: {
       auth(){
-        this.$store.dispatch('login')
+        this.$store.dispatch('login');
 
-        axios.post('url', this.data.form)
+        axios.post('http://localhost:3000/api/usuarios/login', this.$data.form)
           .then( (res) => {
-            this.$store.commit('logon_success', res)
-            this.$router.push({path: '/'})
+            if (res.data.error) {
+              console.log(res.data.error);
+            }else{
+              this.$store.commit('loginSuccess', {
+                user: res.data.user,
+                token: res.data.token
+              });
+              this.$router.push({path: '/'});
+            }
 
           })
           .catch((error) => {
-            this.$store.commit('login_failed', {error})
-          })
+            this.$store.commit('loginFailed', {error})
+          });
       }
     }
   }

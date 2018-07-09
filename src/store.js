@@ -3,20 +3,15 @@ let user = localStorage.getItem('user');
 if (!user) {
   user = null;
 }
-import Vue from 'vue'
-import Vuex from 'vuex'
 
-Vue.use(Vuex);
-
-export default new Vuex.Store ({
+export default {
 
   state: {
     currentUser: user,
     isLoggedIn: !!user,
     loading: false,
-    aurth_error: null
+    auth_error: null
   },
-
   getters: {
     isLoading(state) {
       return state.loading
@@ -33,19 +28,14 @@ export default new Vuex.Store ({
     authError(state) {
       return state.auth_error
     }
-
   },
-
   mutations: {
-
     login(state) {
       state.loading = true;
-      state.aurth_error = null;
+      state.auth_error = null;
     },
-
-    loginSucces(state, payload) {
-
-      state.aurth_error = null;
+    loginSuccess(state, payload) {
+      state.auth_error = null;
       state.isLoggedIn = true;
       state.loading = false;
 
@@ -54,25 +44,21 @@ export default new Vuex.Store ({
         token: payload.token
       };
 
-      localStorage.setItem("user", state.currentUser);
+      localStorage.setItem("user", JSON.stringify(state.currentUser));
     },
-
     loginFailed(state, payload) {
       state.loading = false
       state.auth_error = payload.error
     },
-
     logout(state) {
       localStorage.removeItem("user")
       state.isLoggedIn = false
       state.currentUser = null
     }
   },
-
   actions: {
     login(context) {
       context.commit('login');
     }
-
   }
-})
+};
